@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security 
+		http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<!-- 커스텀 접근거부 페이지 1/2 -->
+<bean id="customAccessDenied" class="com.uinetworks.ecar.security.CustomAccessDeniedHandler"></bean>
+
+<bean id="customLoginSuccess" class="com.uinetworks.ecar.security.CustomLoginSuccessHandler"></bean>
+<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
+<!-- <bean id="customPasswordEncoder" class="com.uinetworks.ecar.security.CustomNoOpPasswordEncoder"></bean> -->
+
+<security:http>
+	<!-- url페이지별 접근권한 제어 -->
+	<security:intercept-url pattern="/sample/all" access="permitAll"/>
+	<security:intercept-url pattern="/sample/manager" access="hasRole('ROLE_MANAGER')"/>
+	<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
+
+	<!-- 커스텀 접근거부 페이지 설정 2/2 -->
+	<!-- <security:access-denied-handler error-page="/accessError"/> -->
+	<security:access-denied-handler ref="customAccessDenied"/>
+	
+	<!-- 기본 로그인창 커스텀 -->
+	<!-- <security:form-login/> -->
+	<security:form-login login-page="/customLogin" authentication-success-handler-ref="customLoginSuccess"/>
+	
+	<!-- CSRF 토큰 비활성화 -->
+	<!-- <security:csrf disabled="true"/> -->
+	
+	<!-- 로그아웃 처리 커스텀 핸들러 -->
+	<security:logout logout-url="/customLogout" invalidate-session="true"/>
+</security:http>
+
+<security:authentication-manager>
+	<security:authentication-provider>
+	
+		<!-- jdbc 연결을 통해 인증을 구현할 경우  -->
+		<security:jdbc-user-service data-source-ref="dataSource"
+		users-by-username-query="select userid, password, enabled from tb_member where userid = ?"
+		authorities-by-username-query="select userid, auth from tb_member_auth where userid = ? "/>
+
+		<!-- 패스워드 인코딩 커스텀 -->
+		<!-- <security:password-encoder ref="customPasswordEncoder"/> -->
+
+		<security:password-encoder ref="bcryptPasswordEncoder"/>
+		
+		<!-- 
+		<security:user-service>-->
+			<!-- user의 아이디에 따른 권한명 부여 --><!-- 
+			<security:user name="member" password="{noop}member" authorities="ROLE_MEMBER"/>
+			<security:user name="admin" password="{noop}admin" authorities="ROLE_MEMBER, ROLE_ADMIN"/>
+		</security:user-service>
+		  -->
+		
+	</security:authentication-provider>
+</security:authentication-manager>
+
+</beans>
