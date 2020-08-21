@@ -15,7 +15,8 @@ import lombok.extern.log4j.Log4j;
 
 //로그인성공시 핸들러 커스텀. 역할에 따라 로그인 이후 즉시 리다이렉션
 @Log4j
-public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {@Override
+public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
+	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
 		log.warn("Login Success");
@@ -37,6 +38,6 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 			response.sendRedirect("/sample/manager");
 			return;
 		}
-		response.sendRedirect("/");
+		response.sendRedirect("/sample/all");
 	}
 }

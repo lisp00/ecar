@@ -9,16 +9,16 @@
 
 <!-- 커스텀 접근거부 페이지 1/2 -->
 <bean id="customAccessDenied" class="com.uinetworks.ecar.security.CustomAccessDeniedHandler"></bean>
-
 <bean id="customLoginSuccess" class="com.uinetworks.ecar.security.CustomLoginSuccessHandler"></bean>
 <bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
-<!-- <bean id="customPasswordEncoder" class="com.uinetworks.ecar.security.CustomNoOpPasswordEncoder"></bean> -->
+<bean id="customUserDetailsService" class="com.uinetworks.ecar.security.CustomUserDetailsService"></bean>
 
 <security:http>
 	<!-- url페이지별 접근권한 제어 -->
 	<security:intercept-url pattern="/sample/all" access="permitAll"/>
 	<security:intercept-url pattern="/sample/manager" access="hasRole('ROLE_MANAGER')"/>
 	<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
+	<security:intercept-url pattern="/member/all" access="permitAll"/>
 
 	<!-- 커스텀 접근거부 페이지 설정 2/2 -->
 	<!-- <security:access-denied-handler error-page="/accessError"/> -->
@@ -36,13 +36,15 @@
 </security:http>
 
 <security:authentication-manager>
-	<security:authentication-provider>
+	<security:authentication-provider user-service-ref="customUserDetailsService">
 	
 		<!-- jdbc 연결을 통해 인증을 구현할 경우  -->
+		<!--  
 		<security:jdbc-user-service data-source-ref="dataSource"
 		users-by-username-query="select userid, password, enabled from tb_member where userid = ?"
 		authorities-by-username-query="select userid, auth from tb_member_auth where userid = ? "/>
-
+		-->
+		
 		<!-- 패스워드 인코딩 커스텀 -->
 		<!-- <security:password-encoder ref="customPasswordEncoder"/> -->
 
@@ -58,5 +60,4 @@
 		
 	</security:authentication-provider>
 </security:authentication-manager>
-
 </beans>

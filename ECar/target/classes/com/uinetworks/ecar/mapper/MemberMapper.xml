@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.uinetworks.ecar.mapper.MemberMapper">
+
+	<resultMap type="com.uinetworks.ecar.model.MemberVO" id="memberMap">
+		<id property="userid" column="userid"/>
+		<result property="userid" column="userid"/>
+		<result property="password" column="password"/>
+		<result property="name" column="name"/>
+		<result property="code" column="code"/>
+		<result property="address" column="address"/>
+		<result property="mobile" column="mobile"/>
+		<result property="enabled" column="enabled"/>
+		<result property="addressDetail" column="address_detail"/>
+		<result property="createDatetime" column="create_datetime"/>
+		<result property="updateDatetime" column="update_datetime"/>
+		<collection property="authList" resultMap="authMap">
+		</collection>
+	</resultMap>
+	
+	<resultMap type="com.uinetworks.ecar.model.AuthVO" id="authMap">
+		<result property="userid" column="userid"/>
+		<result property="auth" column="auth"/>
+	</resultMap>
+	
+	<select id="read" resultMap="memberMap">
+		SELECT
+		    m.userid, m.password, m.name, o.name, m.address, m.address_detail, m.mobile, 
+		    m.enabled, m.create_datetime, m.update_datetime, a.auth
+		FROM
+		    tb_member AS m, tb_member_auth AS a, tb_organization AS o
+		WHERE
+		    m.userid = a.userid AND
+		    o.code = m.code AND
+		    m.userid = #{userid}
+	</select>
+	
+	<select id="readList" resultMap="memberMap">
+		SELECT
+		    m.userid, m.password, m.name, o.name, m.address, m.address_detail, m.mobile, 
+		    m.enabled, m.create_datetime, m.update_datetime, a.auth
+		FROM
+		    tb_member AS m, tb_member_auth AS a, tb_organization AS o
+		WHERE
+		    m.userid = a.userid AND
+		    o.code = m.code
+	</select>
+	
+	<insert id="insertMember">
+		INSERT INTO tb_member(userid, password, name, code, service, address, address_detail, zip_code, mobile, token)
+		VALUES (#{userid}, #{password}, #{name}, #{code}, #{service}, #{address}, #{addressDetail}, #{zipCode}, #{mobile}, #{token})
+	</insert>
+	
+	<insert id="insertAuth">
+		INSERT INTO tb_member_auth(userid, auth)
+		VALUES (#{userid}, #{auth})
+	</insert>
+	
+	<update id="updateMember">
+		UPDATE tb_member
+		SET userid = #{userid},
+			password = #{password},
+			name = #{name},
+			code = #{code},
+			service = #{service},
+			address = #{address},
+			address_detail = #{addressDetail},
+			zip_code = #{zipCode},
+			mobile = #{mobile},
+			token = #{token}
+		WHERE userid = #{userid} 
+	</update>
+	
+	<update id="updateAuth">
+		UPDATE tb_member_auth
+		SET userid = #{userid},
+			auth = #{auth}
+		WHERE userid = #{userid} 
+	</update>
+	
+	<delete id="deleteMember">
+		DELETE
+		FROM tb_member
+		WHERE userid = #{userid}
+	</delete>
+	
+	<delete id="deleteAuth">
+		DELETE
+		FROM tb_member_auth
+		WHERE userid = #{userid}
+	</delete>
+</mapper>
