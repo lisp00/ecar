@@ -1,5 +1,7 @@
 package com.uinetworks.ecar.service;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,6 @@ public class MemberServiceTests {
 		vo.setUserid("test");
 		vo.setPassword("1234");
 		vo.setService("");
-		vo.setToken("token");
 		
 		service.register(vo, authVo);
 	}
@@ -45,7 +46,6 @@ public class MemberServiceTests {
 		vo.setUserid("test");
 		vo.setPassword("5678");
 		vo.setService("A");
-		vo.setToken("to3413ken");
 		
 		service.modify(vo, authVo);
 	}	
@@ -54,7 +54,7 @@ public class MemberServiceTests {
 	public void readListTest() {
 		service.getMemberList().forEach(member -> log.info(member));
 	}
-	@Test
+//	@Test
 	public void readTest() {
 		log.info(service.getMember("admin"));
 	}

@@ -2,6 +2,8 @@ package com.uinetworks.ecar.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.uinetworks.ecar.model.AuthVO;
 import com.uinetworks.ecar.model.MemberVO;
 
@@ -15,4 +17,5 @@ public interface MemberService {
 	public List<MemberVO> getMemberList();
 	
 	public boolean delete(String userid); 
+	
 }

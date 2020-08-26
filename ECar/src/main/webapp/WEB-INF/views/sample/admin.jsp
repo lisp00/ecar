@@ -13,16 +13,16 @@
 	
 	<p>principal : <sec:authentication property="principal"/></p>
 	<p>MemberVO : <sec:authentication property="principal.member"/></p>
-	<p>userid : <sec:authentication property="principal.username"/></p>
+	<p>username : <sec:authentication property="principal.username"/></p>
 	<p>userid : <sec:authentication property="principal.member.userid"/></p>
 	<p>name : <sec:authentication property="principal.member.name"/></p>
 	<p>password : <sec:authentication property="principal.member.password"/></p>
-	<p>code : <sec:authentication property="principal.member.code"/></p>
+	<p>code : <sec:authentication property="principal.member.agencyCode"/></p>
 	<p>service : <sec:authentication property="principal.member.service"/></p>
 	<p>address: <sec:authentication property="principal.member.address"/></p>
 	<p>addressDetail : <sec:authentication property="principal.member.addressDetail"/></p>
 	<p>enabled : <sec:authentication property="principal.member.enabled"/></p>
-	<p>token : <sec:authentication property="principal.member.token"/></p>
+	<p>authorization: <sec:authentication property="principal.member.authorization"/></p>
 	<p>auth : <sec:authentication property="principal.member.authList"/></p>
 	
 	<a href="/customLogout">Logout</a>

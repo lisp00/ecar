@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.uinetworks.ecar.model.AuthVO;
 import com.uinetworks.ecar.model.MemberVO;
@@ -30,8 +31,7 @@ public class MemberMapperTests {
 		MemberVO vo = new MemberVO();
 		vo.setUserid("test");
 		vo.setPassword("1234");
-		vo.setService("");
-		vo.setToken("token");
+		vo.setService("A");
 		
 		mapper.insertMember(vo);
 		mapper.insertAuth(authVo);
@@ -40,14 +40,14 @@ public class MemberMapperTests {
 	
 //	@Test
 	public void testRead() {
-		MemberVO vo = mapper.read("admin");
+		MemberVO vo = mapper.read("driver01");
 		
 		log.info(vo);
 		
 		vo.getAuthList().forEach(authVO -> log.info(authVO));
 	}
 	
-	@Test
+//	@Test
 	public void testReadList() {
 		mapper.readList().forEach(member -> log.info(member));;
 	}
@@ -58,7 +58,6 @@ public class MemberMapperTests {
 		vo.setUserid("test");
 		vo.setPassword("1235");
 		vo.setService("1");
-		vo.setToken("to2312ken");
 		
 		log.info(mapper.updateMember(vo));
 	}

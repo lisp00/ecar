@@ -29,7 +29,7 @@ public class InsertMemberTest {
 	
 	@Test
 	public void testMember() {
-		String insert = "insert into tb_member(userid, password, name, service, code) values (?,?,?,?,?)";
+		String insert = "insert into tb_member(userid, password, name, service, agency_code) values (?,?,?,?,?)";
 
 		Connection con = null;
 		PreparedStatement pstmt = null;

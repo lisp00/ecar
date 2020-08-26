@@ -12,9 +12,9 @@
 	<!-- Root Context: defines shared resources visible to all other web components -->
 		<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 			<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
-			<property name="url" value="jdbc:mysql://localhost:3306/ecar?useSSL=false&amp;allowPublicKeyRetrieval=true"></property>
-			<property name="username" value="root"></property>
-			<property name="password" value="1234"></property>
+			<property name="url" value="jdbc:mysql://ws.uinetworks.kr:13309/ecar?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;allowMultiQueries=true"></property>
+			<property name="username" value="ecar"></property>
+			<property name="password" value="ecar1234"></property>
 		</bean>		
 		
 		<!-- mybatis SqlSessionFactoryBean -->

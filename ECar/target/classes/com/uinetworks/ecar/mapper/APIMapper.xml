@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.uinetworks.ecar.mapper.APIMapper">
+
+<!-- 앱 정보 가져오기 -->
+<select id="versionSelect" resultType="com.uinetworks.ecar.model.VersionVO">
+	select * from tb_version limit 1
+</select>
+
+<!-- 기사 등록 -->
+<insert id="driverInsert">
+	insert into tb_member(userid, password, name, mobile, zip_code, address, address_detail, enabled, authorization, service, agency_code)
+	values(#{userId}, #{password}, #{name}, #{mobile}, #{zipCode}, #{address}, #{addressDetail}, default, default, #{service}, #{agencyCode})
+</insert> 
+
+<!-- 로그인 -->
+<select id="driverSelect" resultType="com.uinetworks.ecar.model.MemberVO">
+	select * from tb_member where userid = #{userId} and password = #{password}
+</select>
+
+<!-- 아이디 중복 체크 -->
+<select id="driverCheck" resultType="com.uinetworks.ecar.model.MemberVO">
+	select userid from tb_member where userid = #{userId}
+</select>
+
+<!-- 토큰 찾기 -->
+<select id="tokenSelect" resultType="com.uinetworks.ecar.model.TokenVO">
+	select token from tb_push where userid = #{userId}
+</select>
+
+<!-- 토큰이 일치하지 않을 때 갱신 -->
+<update id="tokenUpdate">
+	update tb_push set token = #{token} where userid = #{userId}
+</update>
+
+<!-- 토큰이 존재하지 않을 때 추가 -->
+<insert id="tokenInsert">
+	insert into tb_push(userid, token, device_id) values(#{userId}, #{token}, #{deviceId})
+</insert>
+
+<!-- 운영기관 목록 -->
+<select id="agencyList" resultType="com.uinetworks.ecar.model.CodeVO">
+	select code_id, code_name from tb_code where group_code_id = "AGN";
+</select>
+
+<!-- 운행목적 목록 -->
+<select id="purposeList" resultType="com.uinetworks.ecar.model.CodeVO">
+	select code_id, code_name from tb_code where group_code_id = #{groupCodeId};
+</select>
+
+<!-- 차량 목록 -->
+<select id="carList" resultType="com.uinetworks.ecar.model.CarVO">
+	select car_number, car_status from tb_car;
+</select>
+
+<!-- 운행시작 데이터 삽입 -->
+<insert id="driveStartInsert">
+	insert into tb_drive_info(drive_key, name, car_number, purpose_code, agency_code, start_location, end_location, start_time, end_time, distance) 
+	values (#{driveKey}, #{name}, #{carNumber}, #{purposeCode}, #{agencyCode}, #{startLocation}, #{endLocation}, #{startTime}, NULL, 0);	
+</insert>
+
+<!-- 운행 시작시 차량 상태 변경 -->
+<update id="carStatusStart">
+	update tb_car set car_status = "1" where car_number = #{carNumber}
+</update>
+
+<!-- 운행종료 데이터 삽입 -->
+<insert id="driveEndInsert">
+	insert into tb_drive_info(drive_key, end_time, distance) 
+	values (#{driveKey}, #{endTime} , #{distance});	
+</insert>
+
+<!-- 운행종료시 차량 상태 변경 -->
+<update id="carStatusEnd">
+	update tb_car set car_status = "0" where car_number = (select car_number from tb_drive_info where drive_key = #{driveKey})
+</update>
+
+<!-- GPS 데이터 삽입 -->
+<insert id="DriveGPSInsert">
+	insert into tb_drive_gps(drive_key, gps_id, latitude, longitude, receive_time, speed)
+	values(#{driveKey}, default, #{latitude}, #{longitude}, default, #{speed})
+</insert>
+
+<!-- 공지사항 목록 가져오기 -->
+<select id="noticeList" resultType="com.uinetworks.ecar.model.NoticeVO">
+	select seq, title, date, userId from tb_notice limit #{limit} offset #{offset}
+</select>
+
+<!-- 공지사항 상세 조회 -->
+<select id="noticeDetail" resultType="com.uinetworks.ecar.model.NoticeVO">
+	select seq, title, content, date, userId from tb_notice where seq = #{seq}
+</select>
+
+<!-- 공지사항 팝업 조회 -->
+<select id="noticePopup" resultType="com.uinetworks.ecar.model.NoticeVO">
+	select title, content from tb_notice order by date desc limit 1
+</select>
+
+<!-- 푸시 등록 -->
+<insert id="pushInsert">
+	insert into tb_push(userid, token, device_id)
+	values(#{userId}, #{token}, #{deviceId})
+</insert>
+
+<!-- 푸시 on/off 여부 설정 -->
+<update id="pushOnOff">
+	update tb_push set receive = #{receive} where userid = #{userId};
+</update>
+</mapper>

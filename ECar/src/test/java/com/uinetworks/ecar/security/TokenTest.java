@@ -7,6 +7,12 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.uinetworks.ecar.JwtProperties;
+
+import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.Jwts;
 import lombok.extern.log4j.Log4j;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -28,8 +34,8 @@ public class TokenTest {
 	}
 	
 	@Test
-	public void testToken() throws UnsupportedEncodingException {
-		TokenHandler2 test = new TokenHandler2();
-		test.test();
+	public void testToken() throws UnsupportedEncodingException, InterruptedException {
+		TokenHandler tokenHandler = new TokenHandler();
+		tokenHandler.test2();
 	}
 }

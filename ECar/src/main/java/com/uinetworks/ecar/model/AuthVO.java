@@ -1,10 +1,12 @@
 package com.uinetworks.ecar.model;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
+@JsonInclude(Include.NON_NULL)
 public class AuthVO {
 	private String userid;
 	private String auth;

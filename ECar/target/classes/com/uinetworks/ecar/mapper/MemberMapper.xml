@@ -10,11 +10,12 @@
 		<result property="userid" column="userid"/>
 		<result property="password" column="password"/>
 		<result property="name" column="name"/>
-		<result property="code" column="code"/>
+		<result property="agencyCode" column="agency_code"/>
 		<result property="address" column="address"/>
 		<result property="mobile" column="mobile"/>
 		<result property="enabled" column="enabled"/>
 		<result property="addressDetail" column="address_detail"/>
+		<result property="authorization" column="authorization"/>
 		<result property="createDatetime" column="create_datetime"/>
 		<result property="updateDatetime" column="update_datetime"/>
 		<collection property="authList" resultMap="authMap">
@@ -28,34 +29,32 @@
 	
 	<select id="read" resultMap="memberMap">
 		SELECT
-		    m.userid, m.password, m.name, o.name, m.address, m.address_detail, m.mobile, 
-		    m.enabled, m.create_datetime, m.update_datetime, a.auth
+		    m.userid, m.password, m.name, m.address, m.address_detail, m.mobile, 
+		    m.enabled, m.authorization, m.create_datetime, m.update_datetime, a.auth
 		FROM
-		    tb_member AS m, tb_member_auth AS a, tb_organization AS o
+		    tb_member AS m, tb_authority AS a
 		WHERE
 		    m.userid = a.userid AND
-		    o.code = m.code AND
 		    m.userid = #{userid}
 	</select>
 	
 	<select id="readList" resultMap="memberMap">
 		SELECT
-		    m.userid, m.password, m.name, o.name, m.address, m.address_detail, m.mobile, 
-		    m.enabled, m.create_datetime, m.update_datetime, a.auth
+		    m.userid, m.password, m.name, m.address, m.address_detail, m.mobile, 
+		    m.enabled, m.authorization, m.create_datetime, m.update_datetime, a.auth
 		FROM
-		    tb_member AS m, tb_member_auth AS a, tb_organization AS o
+		    tb_member AS m, tb_authority AS a
 		WHERE
 		    m.userid = a.userid AND
-		    o.code = m.code
 	</select>
 	
 	<insert id="insertMember">
-		INSERT INTO tb_member(userid, password, name, code, service, address, address_detail, zip_code, mobile, token)
-		VALUES (#{userid}, #{password}, #{name}, #{code}, #{service}, #{address}, #{addressDetail}, #{zipCode}, #{mobile}, #{token})
+		INSERT INTO tb_member(userid, password, name, agency_code, service, address, address_detail, zip_code, mobile)
+		VALUES (#{userid}, #{password}, #{name}, #{agencyCode}, #{service}, #{address}, #{addressDetail}, #{zipCode}, #{mobile})
 	</insert>
 	
 	<insert id="insertAuth">
-		INSERT INTO tb_member_auth(userid, auth)
+		INSERT INTO tb_authority(userid, auth)
 		VALUES (#{userid}, #{auth})
 	</insert>
 	
@@ -64,18 +63,18 @@
 		SET userid = #{userid},
 			password = #{password},
 			name = #{name},
-			code = #{code},
+			agency_code = #{agencyCode},
 			service = #{service},
 			address = #{address},
 			address_detail = #{addressDetail},
 			zip_code = #{zipCode},
 			mobile = #{mobile},
-			token = #{token}
+			authorization = #{authorization}
 		WHERE userid = #{userid} 
 	</update>
 	
 	<update id="updateAuth">
-		UPDATE tb_member_auth
+		UPDATE tb_authority
 		SET userid = #{userid},
 			auth = #{auth}
 		WHERE userid = #{userid} 
@@ -89,7 +88,7 @@
 	
 	<delete id="deleteAuth">
 		DELETE
-		FROM tb_member_auth
+		FROM tb_authority
 		WHERE userid = #{userid}
 	</delete>
 </mapper>
