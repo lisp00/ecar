@@ -10,9 +10,9 @@ public interface MemberMapper {
 	
 	public MemberVO read(String userid);
 	
-	public void insertMember(MemberVO member);
+	public int insertMember(MemberVO member);
 	
-	public void insertAuth(AuthVO auth);
+	public int insertAuth(AuthVO auth);
 	
 	public int updateMember(MemberVO member);
 	

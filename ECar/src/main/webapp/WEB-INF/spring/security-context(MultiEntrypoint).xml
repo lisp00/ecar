@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security 
+		http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+		
+	<bean id="customUserDetailsService" class="com.uinetworks.ecar.security.CustomUserDetailsService"></bean>
+	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
+	
+	<bean id="jwtAuthenticationFilter" class="com.uinetworks.ecar.security.JwtAuthenticationFilter"></bean>
+	<bean id="authorizationFilter" class="com.uinetworks.ecar.security.AuthorizationFilter"></bean>
+	<bean id="restAuthenticationProvider" class="com.uinetworks.ecar.security.RestAuthenticationProvider"></bean>
+	<bean id="restAccessDeniedHandler" class="com.uinetworks.ecar.security.RestAccessDeniedHandler"></bean>
+	<bean id="restLoginFailureHandler" class="com.uinetworks.ecar.security.RestLoginFailureHandler"></bean>
+	<bean id="restLoginSuccessHandler" class="com.uinetworks.ecar.security.RestLoginSuccessHandler"></bean>
+	<bean id="simpleLoginSuccesshandler" class="com.uinetworks.ecar.security.SimpleLoginSuccesshandler"></bean>
+	<bean id="restLogoutSuccessHandler" class="com.uinetworks.ecar.security.RestLogoutSuccessHandler"></bean>
+	<bean id="authenticationFailureHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler"></bean>
+	<bean id="authenticationSuccessHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler"></bean>
+	<bean id="customUsernamePasswordAuthenticationFilter" class="com.uinetworks.ecar.security.CustomUsernamePasswordAuthenticationFilter">
+		<property name="authenticationManager" ref="authManager"></property>
+		<property name="authenticationFailureHandler" ref="authenticationFailureHandler"></property>
+		<!-- <property name="authenticationSuccessHandler" ref="simpleLoginSuccesshandler"></property> -->
+		<property name="usernameParameter" value="userId"></property>
+		<property name="passwordParameter" value="userPw"></property>
+		<property name="filterProcessesUrl" value="/v1/login"></property>
+	</bean>
+
+	<bean id="adminAccessDenied" class="com.uinetworks.ecar.security.AdminAccessDeniedHandler"></bean>
+	<bean id="adminLoginSuccess" class="com.uinetworks.ecar.security.AdminLoginSuccessHandler"></bean>
+	
+	<bean id="restAuthenticationEntryPoint" class="org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint">
+    	<property name="realmName" value="admin realm" />
+	</bean>
+	
+	<!-- 
+	security-context-repository-ref="adminSecurityContextRepository" 
+	<bean id="adminSecurityContextRepository" class="org.springframework.security.web.context.HttpSessionSecurityContextRepository">
+		<property name="springSecurityContextKey" value="SPRING_SECURITY_CONTEXT" />
+	</bean>
+	
+	<security:global-method-security pre-post-annotations="enabled"/>
+	<security:http pattern="/resources/**" security="none"/>
+	<security:http pattern="/" security="none"/>
+	 -->	
+ 
+	<!-- ::::::::::::::::::::::::::::::::: -->
+	<!-- Routing : /v1/login 로그인 API::: -->
+	<!-- ::::::::::::::::::::::::::::::::: 
+	<security:http pattern="/v1/login/**" entry-point-ref="restAuthenticationEntryPoint" auto-config="false"
+			authentication-manager-ref="restAuthManager" create-session="stateless">
+		<security:csrf disabled="true"/>
+		<security:intercept-url pattern="/**" access="permitAll"/>
+		<security:custom-filter position="FORM_LOGIN_FILTER" ref="customUsernamePasswordAuthenticationFilter"/>
+		<security:access-denied-handler ref="restAccessDeniedHandler"/>
+		<security:custom-filter after="FORM_LOGIN_FILTER" ref="authorizationFilter"/>
+		<security:http-basic entry-point-ref="restAuthenticationEntryPoint"/>
+		<security:logout success-handler-ref="restLogoutSuccessHandler" />
+	</security:http>
+	
+	<security:http>
+		<security:csrf disabled="true"/>
+		<security:intercept-url pattern="/login" access="permitAll"/>
+		<security:intercept-url pattern="/logincheck" access="permitAll"/>
+		<security:custom-filter position="FORM_LOGIN_FILTER" ref="customUsernamePasswordAuthenticationFilter"/>
+		<security:access-denied-handler ref="restAccessDeniedHandler"/>
+		<security:custom-filter after="FORM_LOGIN_FILTER" ref="authorizationFilter"/>
+		<security:http-basic entry-point-ref="restAuthenticationEntryPoint"/>
+		<security:logout success-handler-ref="restLogoutSuccessHandler" />
+	</security:http>
+	-->
+ 
+ 	<!-- ::::::::::::::::::::::::::::::::: -->
+	<!-- Routing : /v1/logincheck 세션체크 -->
+	<!-- ::::::::::::::::::::::::::::::::: -->
+	<!-- 
+	<security:http pattern="/v1/logincheck" entry-point-ref="restAuthenticationEntryPoint" auto-config="true"
+			authentication-manager-ref="authManager" security-context-repository-ref="adminSecurityContextRepository" 
+			create-session="stateless">
+		<security:csrf disabled="true"/>
+		<security:intercept-url pattern="**" access="permitAll"/>
+		<security:custom-filter before="FORM_LOGIN_FILTER" ref="jwtAuthenticationFilter"/>
+		<security:access-denied-handler ref="restAccessDeniedHandler"/>
+		<security:custom-filter after="FORM_LOGIN_FILTER" ref="authorizationFilter"/>
+		<security:http-basic entry-point-ref="restAuthenticationEntryPoint"/>
+		<security:logout success-handler-ref="restLogoutSuccessHandler" />
+	</security:http>
+    -->
+
+	
+	<!-- ::::::::::::::::::::::::::::::::: -->
+	<!-- Routing : /v1/** :::::::::::::::::-->
+	<!-- ::::::::::::::::::::::::::::::::: -->
+	<!-- 
+	<security:http pattern="/v1/**" entry-point-ref="restAuthenticationEntryPoint" auto-config="true"
+			authentication-manager-ref="authManager" security-context-repository-ref="adminSecurityContextRepository"
+			create-session="stateless">
+		<security:csrf disabled="true"/>
+		<security:intercept-url pattern="/logincheck" access="permitAll"/>
+		<security:intercept-url pattern="/login" access="permitAll"/>
+		<security:access-denied-handler ref="restAccessDeniedHandler"/>
+		<security:custom-filter before="FORM_LOGIN_FILTER" ref="jwtAuthenticationFilter"/>
+		<security:http-basic entry-point-ref="restAuthenticationEntryPoint"/>
+	    <security:logout success-handler-ref="restLogoutSuccessHandler" />
+	</security:http>
+	 -->
+	<!-- 
+	<security:http>
+		<security:intercept-url pattern="/sample/all" access="permitAll"/>
+		<security:intercept-url pattern="/sample/manager" access="hasRole('ROLE_MANAGER')"/>
+		<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/member/all" access="permitAll"/>
+		<security:intercept-url pattern="/messageSend" access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')"/>
+		<security:http-basic/>
+		<security:form-login login-page="/customLogin" authentication-success-handler-ref="adminLoginSuccess" />		
+	
+		<security:access-denied-handler ref="adminAccessDenied"/>
+		<security:access-denied-handler error-page="/accessError"/>
+		
+		<security:logout logout-success-url="/customLogin" logout-url="/customLogout" invalidate-session="true"/>
+	</security:http>
+	
+	<security:authentication-manager id="restAuthManager">
+		<security:authentication-provider ref="restAuthenticationProvider"/>
+	</security:authentication-manager>
+	 -->
+	
+	<security:authentication-manager id="authManager">
+		<security:authentication-provider user-service-ref="customUserDetailsService">
+		 	<security:password-encoder ref="bcryptPasswordEncoder"/>
+		 </security:authentication-provider>
+	</security:authentication-manager>
+</beans>

@@ -3,11 +3,8 @@ package com.uinetworks.ecar.message;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.PostConstruct;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.core.io.ClassPathResource;

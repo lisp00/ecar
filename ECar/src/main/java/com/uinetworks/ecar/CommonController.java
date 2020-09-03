@@ -11,13 +11,13 @@ import lombok.extern.log4j.Log4j;
 @Log4j
 public class CommonController {
 
-	@GetMapping("/accessError")
+	@GetMapping("/web/accessError")
 	public void accessDenied(Authentication auth, Model model) {
 		log.info("access Denied : " + auth);
 		
 		model.addAttribute("msg", "Access Denied");
 	}
-	@GetMapping("/customLogin")
+	@GetMapping("/web/customLogin")
 	public void loginInput(String error, String logout, Model model) {
 		log.info("error: " + error);
 		log.info("logout: " + logout);
@@ -31,7 +31,7 @@ public class CommonController {
 		}
 	}
 	
-	@GetMapping("/customLogout")
+	@GetMapping("/web/customLogout")
 	public void logoutGet() {
 		log.info("custom logout");
 	}

@@ -33,6 +33,16 @@
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 	
+	<filter> 
+	    <filter-name>CorsFilter</filter-name> 
+	    <filter-class>com.uinetworks.ecar.security.CorsFilter</filter-class> 
+	</filter> 	
+
+	<filter-mapping>
+	    <filter-name>CorsFilter</filter-name>
+	    <url-pattern>/v1/*</url-pattern>
+	</filter-mapping>
+	
 	<!-- 스프링 시큐리티 기본 설정 -->
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>

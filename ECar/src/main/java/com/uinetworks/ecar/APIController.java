@@ -3,32 +3,45 @@ package com.uinetworks.ecar;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.http.Header;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.uinetworks.ecar.model.CarVO;
 import com.uinetworks.ecar.model.DriveGPSVO;
 import com.uinetworks.ecar.model.DriveInfoVO;
+import com.uinetworks.ecar.model.LoginDTO;
 import com.uinetworks.ecar.model.MemberVO;
 import com.uinetworks.ecar.model.NoticeVO;
 import com.uinetworks.ecar.model.PurposeVO;
 import com.uinetworks.ecar.model.TokenVO;
-import com.uinetworks.ecar.model.MemberVO;
 import com.uinetworks.ecar.service.APIService;
+import com.uinetworks.ecar.service.MemberService;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
+import lombok.extern.log4j.Log4j;
+
+@Log4j
 @RestController
+@RequestMapping(value = "/v1")
 public class APIController {
 
 	@Autowired
 	APIService eCarService;
 	
-
 	/* 서버 상태 체크 */
 	String serverStatus = "on";
 	String serverSessionId = "qwe5678asd1234";
@@ -78,82 +91,24 @@ public class APIController {
 	}
 
 	/* 기사등록 응답 */
-	@RequestMapping(value = "/v1/member/register", method = RequestMethod.PUT)
+	@PostMapping(value = "/register")
 	public ResponseEntity<Map<String, Object>> memberRegister(@RequestBody MemberVO memberVO) throws Exception {
-
-		Map<String, Object> result = new HashMap<String, Object>();
-
-		eCarService.driverInsert(memberVO);
-
-		result.put("code", 200);
-		result.put("error", false);
-		result.put("msg", "OK");
-
-		return new ResponseEntity<>(result, HttpStatus.OK);
+		return eCarService.driverInsert(memberVO);
 	}
 
 	/* 로그인 처리 */
-	@RequestMapping(value = "/v1/login", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> login(@RequestBody MemberVO memberVO) throws Exception {
-
-		Map<String, Object> result = new HashMap<String, Object>();
-		
-		MemberVO userData = eCarService.driverSelect(memberVO);
-		
-		if (userData == null) {
-			result.put("code", 201);
-			result.put("error", true);
-			result.put("msg", "아이디 또는 비밀번호 불일치");
-
-			return new ResponseEntity<>(result, HttpStatus.CREATED);
-
-		} else if (userData.getAuthorization().equals("0")) {
-			result.put("code", 202);
-			result.put("error", false);
-			result.put("msg", "가입승인 대기중 또는 거절");
-
-			return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
-			
-		} else {
-			result.put("code", 200);
-			result.put("error", false);
-			result.put("msg", "OK");
-			result.put("sessionId", serverSessionId);
-		}
-
-		return new ResponseEntity<>(result, HttpStatus.OK);
+	@PostMapping(value = "/login")
+	public ResponseEntity<Map<String, Object>> login(@RequestBody LoginDTO loginDTO) 
+			throws Exception {
+		log.info("userId : " + loginDTO.getUserId() + " userPw : " + loginDTO.getUserPw());
+		return eCarService.login(loginDTO);
 	}
 	
 	/* 로그인 세션 체크 */
-	@RequestMapping(value = "/v1/logincheck", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> loginCheck(@RequestBody TokenVO tokenVO) throws Exception {
-		
-		boolean check = sessionCheck(tokenVO.getSessionId());
-		
-		Map<String, Object> result = new HashMap<String, Object>();
-		
-		if(check==false) {
-			result.put("code", 202);
-			result.put("msg", "Invalid Session");
-			
-			return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
-		}
-		
-		boolean survey = true;
-		
-		if(serverSessionId.equals(tokenVO.getSessionId()) && survey == false) {
-			result.put("code", 201);
-			result.put("msg", "ok");
-			result.put("survey", survey);
-			
-			return new ResponseEntity<>(result, HttpStatus.CREATED);
-		}
-		
-		result.put("code", 200);
-		result.put("msg", "ok");
-		result.put("survey", survey);
-		
-		return new ResponseEntity<>(result, HttpStatus.OK);
+	@GetMapping(value = "/logincheck")
+	public ResponseEntity<Map<String, Object>> loginCheck(HttpServletRequest request) throws Exception {
+//		String accessToken = request.getHeader("accessToken");
+		return eCarService.loginCheck(request);
 	}
 	
 	/* 아이디 중복체크 */
